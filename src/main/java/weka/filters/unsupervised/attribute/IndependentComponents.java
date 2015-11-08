@@ -347,8 +347,6 @@ public class IndependentComponents
 	 * 				transformation does not succeed
 	 */
 	protected Instance convertInstance(Instance currentInstance) throws Exception {
-		
-		int last_idx;
 		Instance tmp;
 		Instance inst;
 		double[][] result;
@@ -363,15 +361,17 @@ public class IndependentComponents
 			tmp.deleteAttributeAt(currentInstance.classIndex());
 		}
 		result = m_filter.transform(new double[][]{tmp.toDoubleArray()});
-		last_idx = result[0].length;
-		
+
 		// copy the results back into an instance
 		inst = new DenseInstance(getOutputFormat().numAttributes());
-		for (int i = 0; i < last_idx; i++) {
+        inst.setDataset(getOutputFormat());
+
+		for (int i = 0; i < getOutputFormat().numAttributes(); i++) {
 			inst.setValue(i, result[0][i]);
 		}
+
 		if (currentInstance.classIndex() >= 0) {
-			inst.setValue(last_idx, currentInstance.classValue());
+            inst.setClassValue(currentInstance.classValue());
 		}
 		
 		return inst;
